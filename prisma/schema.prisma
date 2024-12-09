@@ -1,0 +1,91 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id             String    @id @default(uuid())
+  username       String    @unique
+  password       String
+  name           String
+  email          String    @unique
+  phoneNumber    String
+  profilePicture String
+  bookings       Booking[]
+  reviews        Review[]
+  hosts          Host[]
+}
+
+model Host {
+  id             String     @id @default(uuid())
+  username       String     @unique
+  password       String
+  name           String
+  email          String     @unique
+  phoneNumber    String
+  profilePicture String
+  aboutMe        String
+  userId         String
+  user           User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  properties     Property[]
+}
+
+model Property {
+  id            String    @id @default(uuid())
+  title         String
+  description   String
+  location      String    @default("")
+  pricePerNight Float
+  bedroomCount  Int       @default(0)
+  bathroomCount Int       @default(0)
+  maxGuestCount Int       @default(0)
+  rating        Int       @default(0)
+  hostId        String
+  host          Host      @relation(fields: [hostId], references: [id], onDelete: Cascade)
+  amenities     Amenity[] @relation("PropertyAmenities")
+  bookings      Booking[]
+  reviews       Review[]
+
+  @@index([hostId])
+}
+
+model Booking {
+  id             String   @id @default(uuid())
+  checkinDate    DateTime
+  checkoutDate   DateTime
+  numberOfGuests Int
+  totalPrice     Float
+  bookingStatus  String
+  userId         String
+  propertyId     String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  property       Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([propertyId])
+}
+
+model Amenity {
+  id          String     @id @default(uuid())
+  name        String     @unique
+  description String     // Voeg dit veld toe
+  properties  Property[] @relation("PropertyAmenities")
+}
+
+model Review {
+  id         String   @id @default(uuid())
+  rating     Int
+  comment    String
+  userId     String
+  propertyId String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, propertyId])
+  @@index([userId])
+  @@index([propertyId])
+}

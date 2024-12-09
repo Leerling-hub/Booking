@@ -1,0 +1,47 @@
+{
+  "name": "bookings-project",
+  "version": "1.0.0",
+  "description": "This repository contains starter code for the Bookings project.",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "cross-env PORT=3006 node index.js",
+    "test": "cross-env PORT=3007 mocha tests/**/*.test.mjs --timeout 30000",
+    "test:api": "node resetDatabase.js && newman run \"postman/collections/REST API - CRUD.postman_collection.json\" -e postman/environments/Local.postman_environment.json",
+    "dev": "nodemon",
+    "prisma:migrate": "npx prisma migrate dev --name init",
+    "prisma:studio": "npx prisma studio",
+    "prisma:seed": "node prisma/seed.js",
+    "prisma:teardown": "node prisma/teardownDatabase.js",
+    "reset:db": "node resetDatabase.js",
+    "clear:db": "node clearDatabase.js",
+    "test:setup": "npm run reset:db",
+    "test:positive": "cross-env PORT=3007 mocha tests/positive_tests/**/*.test.mjs --timeout 10000",
+    "test:negative": "cross-env PORT=3007 mocha tests/negative_tests/**/*.test.mjs --timeout 10000",
+    "test:positive:full": "npm run test:setup && npm run test:positive",
+    "test:negative:full": "npm run test:setup && npm run test:negative"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.22.0",
+    "bcrypt": "^5.1.1",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.0",
+    "jsonwebtoken": "^9.0.2",
+    "uuid": "^11.0.2",
+    "winston": "^3.16.0",
+    "winston-daily-rotate-file": "^5.0.0"
+  },
+  "devDependencies": {
+    "chai": "^5.1.1",
+    "chai-http": "^5.1.1",
+    "cross-env": "^7.0.3",
+    "mocha": "^10.7.3",
+    "newman": "^6.2.0",
+    "nodemon": "^3.1.7",
+    "prisma": "^5.22.0",
+    "semver": "^7.5.2",
+    "sinon": "^19.0.2",
+    "supertest": "^7.0.0"
+  },
+  "license": "MIT"
+}
